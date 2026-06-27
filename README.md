@@ -30,9 +30,7 @@ definite (no real-world joint distribution exists otherwise), it is
 checked via its eigenvalues, then decomposed with the **Cholesky
 factorization**:
 
-```
-corr_matrix = L @ L.T
-```
+$$\text{corr matrix} = L L^T$$
 
 `L` lets us turn independent random draws into correlated ones (see
 below) — this is the standard bridge between "easy to simulate"
@@ -43,9 +41,7 @@ below) — this is the standard bridge between "easy to simulate"
 Each asset's terminal value follows risk-neutral **Geometric Brownian
 Motion**:
 
-```
-Si(T) = Si(0) * exp((r - sigma_i^2 / 2) * T + sigma_i * sqrt(T) * Wi)
-```
+$$S_i(T) = S_i(0) \cdot \exp\left[\left(r - \frac{\sigma_i^2}{2}\right) T + \sigma_i \sqrt{T} \cdot W_i\right]$$
 
 Independent noise `Z ~ N(0, I)` is correlated via `W = Z @ L.T`, so that
 `Cov(W) = L @ L.T = corr_matrix`. Since the worst-of payoff only depends
@@ -55,9 +51,7 @@ time-stepping needed, and no discretization error.
 
 ### 3. Worst-of pricing (`pricing.py`)
 
-```
-Price = notional * e^(-rT) * E[min(S1(T)/S1(0), S2(T)/S2(0), S3(T)/S3(0))]
-```
+$$\text{Price} = \text{notional} \cdot e^{-rT} \cdot \mathbb{E}\left[\min\left(\frac{S_1(T)}{S_1(0)}, \frac{S_2(T)}{S_2(0)}, \frac{S_3(T)}{S_3(0)}\right)\right]$$
 
 The `e^(-rT)` factor is exactly a zero-coupon bond price at maturity T —
 the same discounting object used throughout derivatives pricing. There
@@ -65,9 +59,7 @@ is no closed-form formula for the minimum of several correlated
 lognormal variables, so Monte Carlo is necessary. The estimate comes
 with a **95% confidence interval**:
 
-```
-price +/- 1.96 * notional * e^(-rT) * std(payoffs) / sqrt(N)
-```
+$$\text{price} \pm 1.96 \cdot \text{notional} \cdot e^{-rT} \cdot \frac{\text{std(payoffs)}}{\sqrt{N}}$$
 
 ### 4. Sensitivities (`sensitivities.py`)
 
@@ -169,10 +161,10 @@ comment block directly above the relevant code.
 
 ## Gallery
 
-| Worst-of performance distribution | Price vs correlation |
+| Worst-of performance distribution | Delta per asset |
 |:---:|:---:|
-| ![](Graphiques/Distribution.png) | ![](Graphiques/PriceVsRho.png) |
+| ![](Graphiques/Distribution.png) | ![](Graphiques/Delta.png) |
 
-| Delta per asset |
+| Price vs correlation |
 |:---:|
-| ![](Graphiques/Delta.png) |
+| ![](Graphiques/PriceVsRho.png) |
